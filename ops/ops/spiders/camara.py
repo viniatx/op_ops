@@ -13,9 +13,13 @@ class CamaraSpider(BaseSpider):
         hxs = HtmlXPathSelector(response)
         values = hxs.select("//option/@value").extract()
         values.remove('')
-        for value in values:
+        for value in values:  
             url = self.DEP_BASE_URL % value
             yield Request(url, callback=self.parse_dept)
 
     def parse_dept(self, response):
-        pass
+        yield {
+            'nome': response.css('ul.visualNoMarker li:nth-child(1)::text').extract_first(),
+            'niver': response.css('ul.visualNoMarker li:nth-child(2)::text').extract_first(),
+            'partido': response.css('ul.visualNoMarker li:nth-child(3)::text').extract_first()
+        }
